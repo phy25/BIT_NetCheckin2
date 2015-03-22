@@ -56,10 +56,11 @@ public class LoginService extends Service implements ConnTestCallBack,LoginState
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(TAG, "Get intent in onBind " + intent.getAction());
-        if(intent.getAction().equals(LoginService.ACTION_DO_TEST))
-            ConnTest.test(this);
-
+        if(intent.getAction() != null) {
+            Log.d(TAG, "Get intent in onBind " + intent.getAction());
+            if (intent.getAction().equals(LoginService.ACTION_DO_TEST))
+                ConnTest.test(this);
+        }
         return new LoginServiceBinder();
     }
 
@@ -115,7 +116,10 @@ public class LoginService extends Service implements ConnTestCallBack,LoginState
                 else if(action.equals(ACTION_STOP_LISTEN))
                     stopListen();
                 else if(action.equals(ACTION_DO_TEST))
-                    ConnTest.test(this);
+                    if(((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).isWifiEnabled())
+                        ConnTest.test(this);
+                else if(action.equals(ACTION_RE_LOGIN))
+                    LoginHelper.asyncForceLogout();
                 else
                     Log.e(TAG, "Unknown action received");
             }
@@ -184,7 +188,8 @@ public class LoginService extends Service implements ConnTestCallBack,LoginState
             status = NetworkState.OFFLINE;
 
             stopListen();
-            mNotifTools.sendSimpleNotification(getApplicationContext(), "离线状态", "点击查看详情");
+            if(message.equals("LOGOUT_OK"))
+                mNotifTools.sendSimpleNotification(getApplicationContext(), "已断开", "点击查看详情");
         }
         else if((state == LoginHelper.LOGIN_MODE_1) || (state == LoginHelper.LOGIN_MODE_2)) {
             Log.i(TAG, "login in mode 1");
