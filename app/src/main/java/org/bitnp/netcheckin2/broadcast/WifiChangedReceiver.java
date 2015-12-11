@@ -8,6 +8,7 @@ import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import org.bitnp.netcheckin2.service.LoginService;
+import org.bitnp.netcheckin2.util.NotifTools;
 import org.bitnp.netcheckin2.util.SharedPreferencesManager;
 
 public class WifiChangedReceiver extends BroadcastReceiver {
@@ -24,7 +25,9 @@ public class WifiChangedReceiver extends BroadcastReceiver {
         Log.v(TAG, "Wifi status changed");
         mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         if(!mWifiManager.isWifiEnabled()) {
+            // Using mobile data
             callBackToService(context, LoginService.COMMAND_STOP_LISTEN);
+            cancelNotification(context);
             return;
         }
 
@@ -33,6 +36,9 @@ public class WifiChangedReceiver extends BroadcastReceiver {
         if(new SharedPreferencesManager(context).isAutoLogin(currentSSID)){
             Log.i(TAG, "WIFI check ok");
             callBackToService(context, LoginService.COMMAND_DO_TEST);
+        }else{
+            cancelNotification(context);
+            // We don't know whether the network is in campus
         }
     }
 
@@ -41,5 +47,9 @@ public class WifiChangedReceiver extends BroadcastReceiver {
         Intent service = new Intent(context, LoginService.class);
         service.putExtra("command", action);
         context.startService(service);
+    }
+
+    private void cancelNotification(Context context){
+        NotifTools.getInstance(context).cancelNotification();
     }
 }

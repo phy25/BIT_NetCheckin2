@@ -58,9 +58,9 @@ public class NotifTools {
     }
 
     /**
-     * @param isToService this param doesn't effect the function, it marks different interfaces of functions
+     * isToService param is replaced by the new function name
      * */
-    public void sendSimpleNotification(Context context, String title, String content,boolean isToService){
+    public void sendSimpleNotificationAndReLogin(Context context, String title, String content){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             Intent proIntent = new Intent(context, LoginService.class);
@@ -101,6 +101,15 @@ public class NotifTools {
             mNotificationManager.notify(0, mBuilder.build());
         } else {
             Toast.makeText(context, content, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void cancelNotification(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.cancel(0);
+        } else {
+            // As toast will close itself, forget it
         }
     }
 }
