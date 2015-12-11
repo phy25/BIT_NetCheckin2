@@ -106,7 +106,6 @@ public class NotifTools {
 
     public void cancelNotification(){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.cancel(0);
         } else {
             // As toast will close itself, forget it
