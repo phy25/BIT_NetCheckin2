@@ -48,9 +48,17 @@ public class NotifTools {
                     .setContentTitle(title)
                     .setContentText(content)
                     .setTicker(title)
+                    .setLocalOnly(true)
                     .setContentIntent(pd)
                     .setSmallIcon(R.mipmap.logo);
             //.setContentIntent(PendingIntent.getActivity(context,1,new Intent(context, MainActivity.class),Intent.));
+
+            if(content.getBytes().length > 32){
+                mBuilder.setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(content));
+                // Make it collapsible
+            }
+
             mNotificationManager.notify(0, mBuilder.build());
         } else {
             Toast.makeText(context, content, Toast.LENGTH_SHORT).show();
@@ -69,6 +77,7 @@ public class NotifTools {
                     .setContentTitle(title)
                     .setContentText(content)
                     .setTicker(title)
+                    .setLocalOnly(true)
                     .setContentIntent(pProIntent)
                     .setSmallIcon(R.mipmap.logo);
             mNotificationManager.notify(0, mBuilder.build());
@@ -77,36 +86,7 @@ public class NotifTools {
         }
     }
 
-
-    public void sendButtonNotificationAndReLogin(Context context, String title, String content){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            Intent proIntent = new Intent(context, LoginService.class);
-            Intent conIntent = new Intent(context, MainActivity.class);
-
-            proIntent.putExtra("command", LoginService.COMMAND_RE_LOGIN);
-            PendingIntent pProIntent = PendingIntent.getService(context, 0, proIntent, 0);
-            PendingIntent pConIntent = PendingIntent.getActivity(context, 0, conIntent, 0);
-
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-                    .setSmallIcon(R.mipmap.logo)
-                    .setAutoCancel(true)
-                    .setContentTitle(title)
-                    .setContentText(content)
-                    .setTicker(content)
-                    .addAction(R.drawable.ic_action_ok, context.getResources().getString(R.string.confirm_yes), pProIntent)
-                    .addAction(R.drawable.ic_action_no, context.getResources().getString(R.string.confirm_cancel), pConIntent);
-
-            mNotificationManager.notify(0, mBuilder.build());
-        } else {
-            Toast.makeText(context, content, Toast.LENGTH_SHORT).show();
-        }
-    }
-
     public void cancelNotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mNotificationManager.cancel(0);
-        } else {
-            // As toast will close itself, forget it
-        }
+        mNotificationManager.cancel(0);
     }
 }
