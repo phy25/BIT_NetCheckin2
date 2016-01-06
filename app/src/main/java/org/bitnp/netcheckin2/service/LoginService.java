@@ -123,7 +123,7 @@ public class LoginService extends Service implements ConnTestCallBack, LoginStat
                     if (((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).isWifiEnabled()) {
                         Log.d(TAG, "Test conn request is sending to ConnTest");
                         ConnTest.test(this);
-                        updateBalance();
+                        //updateBalance();
                     }
                 }
                 else if(action.equals(COMMAND_RE_LOGIN)) {
