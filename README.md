@@ -1,4 +1,4 @@
-# BIT_NetCheckin2
+# BITion a.k.a BIT_NetCheckin2
 
  Overview
 ---

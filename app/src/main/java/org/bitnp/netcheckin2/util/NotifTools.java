@@ -7,6 +7,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
@@ -22,7 +24,8 @@ public class NotifTools {
     private static NotificationManager mNotificationManager;
     private static NotifTools instance;
     private static final String NOTIFICATION_DELETED_ACTION = "NOTIFICATION_DELETED";
-    private static boolean notif0_cleared = false;
+    private static boolean notif0Cleared = false;
+    private static Bitmap logoBM;
 
     private NotifTools(){}
 
@@ -32,6 +35,13 @@ public class NotifTools {
             mNotificationManager = (NotificationManager) context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         }
         return instance;
+    }
+
+    public static Bitmap getlogoBM(Context context){
+        if(logoBM == null){
+            logoBM = BitmapFactory.decodeResource(context.getResources(), R.mipmap.logo);
+        }
+        return logoBM;
     }
 
     // open MainAcitivity when clicked
@@ -52,7 +62,8 @@ public class NotifTools {
                     .setTicker(title)
                     .setLocalOnly(true)
                     .setContentIntent(pd)
-                    .setSmallIcon(R.mipmap.logo);
+                    .setLargeIcon(getlogoBM(context))
+                    .setSmallIcon(R.mipmap.notification_icon);
             //.setContentIntent(PendingIntent.getActivity(context,1,new Intent(context, MainActivity.class),Intent.));
 
             if(content.getBytes().length > 32){
@@ -70,10 +81,10 @@ public class NotifTools {
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            notif0_cleared = true; // Do what you want here
+            notif0Cleared = true; // Do what you want here
             context.unregisterReceiver(this);
         }
-    };
+    }
 
     // This is showing balance
     public void sendQuietNotification(Context context, String title, String content, boolean update){
@@ -82,12 +93,12 @@ public class NotifTools {
             Intent intent = new Intent(context, MainActivity.class);
 
             if(update){
-                if(notif0_cleared){
-                   // don't continue
-                    return;
+                if(notif0Cleared){
+                   // Don't continue
+                   return;
                 }
             }else{
-                notif0_cleared = false;
+                notif0Cleared = false;
             }
 
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
@@ -108,7 +119,8 @@ public class NotifTools {
                     .setLocalOnly(true)
                     .setContentIntent(pd)
                     .setDeleteIntent(dPendingIntent)
-                    .setSmallIcon(R.mipmap.logo);
+                    .setLargeIcon(getlogoBM(context))
+                    .setSmallIcon(R.mipmap.notification_icon);
 
             mNotificationManager.notify(0, mBuilder.build());
         } else {
@@ -130,7 +142,8 @@ public class NotifTools {
                     .setTicker(title)
                     .setLocalOnly(true)
                     .setContentIntent(pProIntent)
-                    .setSmallIcon(R.mipmap.logo);
+                    .setLargeIcon(getlogoBM(context))
+                    .setSmallIcon(R.mipmap.notification_icon);
             mNotificationManager.notify(0, mBuilder.build());
         } else {
             Toast.makeText(context, content, Toast.LENGTH_SHORT).show();
