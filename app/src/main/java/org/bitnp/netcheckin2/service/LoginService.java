@@ -164,7 +164,6 @@ public class LoginService extends Service implements ConnTestCallBack, LoginStat
                 public void run() {
                     Log.d(TAG, "Run in timer task");
                     ConnTest.test(LoginService.this);
-                    updateBalance();
                 }
             };
             timer.schedule(timerTask, 0, interval);
@@ -220,8 +219,8 @@ public class LoginService extends Service implements ConnTestCallBack, LoginStat
                     asyncRelog();
             } else if(!message.equals("") && (message.length() < 60)){
                 if(message.equals(getString(R.string.login_toast_success_matcher))){
-                    sendNotif(message, getString(R.string.toast_seedetail));
-                }else {
+                    mNotifTools.sendQuietNotification(getApplicationContext(), message, getString(R.string.toast_seedetail), false);
+                }else{
                     sendNotif(getString(R.string.login_toast_failure), message);
                 }
             }
@@ -263,6 +262,10 @@ public class LoginService extends Service implements ConnTestCallBack, LoginStat
         float balance = LoginHelper.getBalance(uid);
         if(balance > Global.INF){
             mBalance = balance;
+            if(!mManager.getIsSilent()) {
+                mNotifTools.sendQuietNotification(getApplicationContext(),
+                        String.format(getString(R.string.notif_balance_title), balance), getString(R.string.toast_seedetail), true);
+            }
         }
     }
 

@@ -55,6 +55,7 @@
     <string name="toast_logged">已登录</string>
     <string name="toast_loggedout">已断开</string>
     <string name="toast_seedetail">点击查看详情</string>
+    <string name="notif_balance_title">剩余流量 %1$d G</string>
     <string name="notif_forcelogout_title">是否强制断开</string>
     <string name="notif_forcelogout_desc">点击登出所有在线用户，并在%1$s秒后重连</string>
     <string name="status_logged">已登录</string>

@@ -99,7 +99,7 @@ public class SharedPreferencesManager {
 
     public long getAutoCheckTime(){
         SharedPreferences sp = context.getSharedPreferences("configuration", Context.MODE_PRIVATE);
-        return sp.getLong("autochecktime_millis", 20 * 1000);
+        return sp.getLong("autochecktime_millis", 30 * 1000);
     }
 
     public void setAutoCheckTime(long value){

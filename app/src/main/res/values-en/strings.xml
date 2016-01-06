@@ -99,6 +99,7 @@ By LangleyChang and entalent
     <string name="login_error_messages_limit">Maximum login session number exceeded, if you believe your account has been stolen, contact Network Service Center</string>
     <string name="notif_forcelogout_desc">Tap to log out all online session and reconnect in %1$ds</string>
     <string name="notif_forcelogout_title">Perform force logout?</string>
+    <string name="notif_balance_title">Remaining flux %1$d G</string>
     <string name="toast_loggedout">Disconnected</string>
     <string name="toast_seedetail">Tap to see detail</string>
     <string name="login_toast_failure">Authentication failure</string>
