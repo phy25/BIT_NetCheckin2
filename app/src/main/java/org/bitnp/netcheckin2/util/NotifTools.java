@@ -3,10 +3,8 @@ package org.bitnp.netcheckin2.util;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -14,6 +12,7 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import org.bitnp.netcheckin2.R;
+import org.bitnp.netcheckin2.broadcast.NotifDeletedReceiver;
 import org.bitnp.netcheckin2.service.LoginService;
 import org.bitnp.netcheckin2.ui.MainActivity;
 
@@ -23,7 +22,6 @@ import org.bitnp.netcheckin2.ui.MainActivity;
 public class NotifTools {
     private static NotificationManager mNotificationManager;
     private static NotifTools instance;
-    private static final String NOTIFICATION_DELETED_ACTION = "NOTIFICATION_DELETED";
     private static boolean notif0Cleared = false;
     private static Bitmap logoBM;
 
@@ -42,6 +40,10 @@ public class NotifTools {
             logoBM = BitmapFactory.decodeResource(context.getResources(), R.mipmap.logo);
         }
         return logoBM;
+    }
+
+    public static void setNotif0Cleared(boolean b){
+        notif0Cleared = b;
     }
 
     // open MainAcitivity when clicked
@@ -78,13 +80,7 @@ public class NotifTools {
         }
     }
 
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            notif0Cleared = true; // Do what you want here
-            context.unregisterReceiver(this);
-        }
-    }
+
 
     // This is showing balance
     public void sendQuietNotification(Context context, String title, String content, boolean update){
@@ -106,9 +102,8 @@ public class NotifTools {
             stackBuilder.addNextIntent(intent);
             PendingIntent pd = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            Intent dIntent = new Intent(NOTIFICATION_DELETED_ACTION);
-            PendingIntent dPendingIntent = PendingIntent.getBroadcast(context, 0, dIntent, 0);
-            context.registerReceiver(receiver, new IntentFilter(NOTIFICATION_DELETED_ACTION));
+            Intent dIntent = new Intent(context, NotifDeletedReceiver.class);
+            PendingIntent dPendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), 0, dIntent, 0);
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                     .setAutoCancel(true)
