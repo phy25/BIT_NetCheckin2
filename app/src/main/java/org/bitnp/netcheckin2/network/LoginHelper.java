@@ -55,7 +55,7 @@ public class LoginHelper {
     static{
         VALID_UID = Pattern.compile("^[\\d]+$");
         VALID_KEEPLIVE_STATUS = Pattern.compile("^[\\d]+,[\\d]+,[\\d]+,[\\d]+");
-        VALID_BALANCE = Pattern.compile("[\\d,?]*(?=Bytes)");
+        VALID_BALANCE = Pattern.compile("\"remain_flux\":\"([\\d,\\.]+)M\"");
         VALID_COMMA = Pattern.compile(",");
     }
 
@@ -266,12 +266,11 @@ public class LoginHelper {
      * */
     public static float getBalance(String uid){
         String response = "";
-        response = HttpRequest.sendGet("http://10.0.0.55/user_info.php",  "uid=" + uid);
+        response = HttpRequest.sendGet("http://10.0.0.55/user_online.php", "");
         if(response.length() > 5) {
-            //  [\d,?]*(?=Bytes)
             Matcher matcher = VALID_BALANCE.matcher(response);
             if(matcher.find()){
-                response = matcher.group();
+                response = matcher.group(1);
             }
             matcher = VALID_COMMA.matcher(response);
             response = matcher.replaceAll("");
@@ -279,7 +278,8 @@ public class LoginHelper {
             try {
                 result = Float.parseFloat(response);
                 Log.i(TAG, "Get balance " + result);
-                result /= 1000 * 1000 * 1000;
+                result /= 1000; // the input is M
+                // TODO: Don't know what will happen when balance is not enough
             }
             catch(NumberFormatException e){
                 result = 0;
