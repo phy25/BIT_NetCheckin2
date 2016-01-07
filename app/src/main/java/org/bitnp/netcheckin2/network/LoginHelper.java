@@ -33,7 +33,7 @@ public class LoginHelper {
 
     private static Context context;
 
-    static Pattern VALID_UID, VALID_KEEPLIVE_STATUS, VALID_BALANCE, VALID_COMMA;
+    static Pattern VALID_UID, VALID_KEEPLIVE_STATUS, VALID_BALANCE, VALID_COMMA, VALID_USED_IN, VALID_USED_OUT;
 
     public static String[] LOGIN_STATUS = {
             "user_tab_error","username_error" ,"non_auth_error" ,"password_error" ,"status_error",
@@ -56,6 +56,8 @@ public class LoginHelper {
         VALID_UID = Pattern.compile("^[\\d]+$");
         VALID_KEEPLIVE_STATUS = Pattern.compile("^[\\d]+,[\\d]+,[\\d]+,[\\d]+");
         VALID_BALANCE = Pattern.compile("\"remain_flux\":\"([\\d,\\.]+)M\"");
+        VALID_USED_IN = Pattern.compile("\"user_in_bytes\":\"([\\d,\\.]+)M\"");
+        VALID_USED_OUT = Pattern.compile("\"user_out_bytes\":\"([\\d,\\.]+)M\"");
         VALID_COMMA = Pattern.compile(",");
     }
 
@@ -89,6 +91,7 @@ public class LoginHelper {
     public static void asyncLogin(){
         if(username == null || password == null || username.isEmpty() || password.isEmpty())
             return ;
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -269,15 +272,47 @@ public class LoginHelper {
         response = HttpRequest.sendGet("http://10.0.0.55/user_online.php", "");
         if(response.length() > 5) {
             Matcher matcher = VALID_BALANCE.matcher(response);
+            String sBalance = "";
             if(matcher.find()){
-                response = matcher.group(1);
+                sBalance = matcher.group(1);
+                matcher = VALID_COMMA.matcher(sBalance);
+                sBalance = matcher.replaceAll("");
             }
-            matcher = VALID_COMMA.matcher(response);
-            response = matcher.replaceAll("");
-            float result;
+
+            // Now it ignores values under 1M, so it's quite dirty
+            Matcher matcherIn = VALID_USED_IN.matcher(response);
+            String sBytesIn = "";
+            if(matcherIn.find()){
+                sBytesIn = matcherIn.group(1);
+                matcherIn = VALID_COMMA.matcher(sBytesIn);
+                sBytesIn = matcherIn.replaceAll("");
+            }
+
+            Matcher matcherOut = VALID_USED_OUT.matcher(response);
+            String sBytesOut = "";
+            if(matcherOut.find()){
+                sBytesOut = matcherOut.group(1);
+                matcherOut = VALID_COMMA.matcher(sBytesOut);
+                sBytesOut = matcherOut.replaceAll("");
+            }
+
+            float result, bytesIn, bytesOut;
             try {
-                result = Float.parseFloat(response);
-                Log.i(TAG, "Get balance " + result);
+                bytesIn = Float.parseFloat(sBytesIn);
+            }catch(NumberFormatException e){
+                bytesIn = 0;
+            }
+            try {
+                bytesOut = Float.parseFloat(sBytesOut);
+            }catch(NumberFormatException e){
+                bytesOut = 0;
+            }
+
+            try {
+                result = Float.parseFloat(sBalance);
+
+                Log.i(TAG, "Get balance " + result + "(In "+bytesIn+" Out "+bytesOut+")");
+                result = result - bytesIn - bytesOut;
                 result /= 1000; // the input is M
                 // TODO: Don't know what will happen when balance is not enough
             }
@@ -290,7 +325,7 @@ public class LoginHelper {
         return 0;
     }
 
-    public static String getresponseMessage(){
+    public static String getResponseMessage(){
         return responseMessage;
     }
 

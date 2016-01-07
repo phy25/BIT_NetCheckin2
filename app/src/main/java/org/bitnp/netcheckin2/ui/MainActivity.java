@@ -35,6 +35,7 @@ import org.bitnp.netcheckin2.service.LoginService;
 import org.bitnp.netcheckin2.service.NetworkState;
 import org.bitnp.netcheckin2.ui.wave_progress.WaterWaveProgress;
 import org.bitnp.netcheckin2.util.Global;
+import org.bitnp.netcheckin2.util.NotifTools;
 import org.bitnp.netcheckin2.util.SharedPreferencesManager;
 
 import java.util.ArrayList;
@@ -135,6 +136,8 @@ public class MainActivity extends ActionBarActivity{
             public void onClick(View v) {
                 if (LoginService.getStatus() == NetworkState.OFFLINE) {
                     LoginHelper.asyncLogin();
+                }else{
+                    NotifTools.setNotif0Cleared(false);
                 }
             }
         });
@@ -231,8 +234,10 @@ public class MainActivity extends ActionBarActivity{
                             case 1://登录
                                 if (LoginService.getStatus() == NetworkState.OFFLINE) {
                                     LoginHelper.asyncLogin();
-                                } else
+                                } else {
                                     Toast.makeText(getApplicationContext(), getString(R.string.toast_logged), Toast.LENGTH_SHORT).show();
+                                    NotifTools.setNotif0Cleared(false);
+                                }
                                 break;
                             case 2://注销
                                 LoginHelper.asyncForceLogout();
@@ -316,10 +321,10 @@ public class MainActivity extends ActionBarActivity{
         Log.d(TAG, "Set progress is called to set balance");
         if(LoginService.getStatus() == NetworkState.OFFLINE){
             waveProgress.setProgress(50);
-            waveProgress.setProgressTxt(getString(R.string.status_unlogged));
+            waveProgress.setProgressTxt("");
             waveProgress.setCrestCount((float)0.5);
             waveProgress.setWaveSpeed((float)0.02);
-            status.setText("");
+            status.setText(getString(R.string.status_unlogged));
         } else {
             float fBalance = LoginService.getmBalance();
             waveProgress.setCrestCount((float)1.5);
