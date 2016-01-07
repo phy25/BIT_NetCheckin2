@@ -263,8 +263,10 @@ public class LoginService extends Service implements ConnTestCallBack, LoginStat
         if(balance > Global.INF){
             mBalance = balance;
             if(!mManager.getIsSilent()) {
+                String sBalance = mBalance + "";
+                sBalance = sBalance.substring(0, (sBalance.length() > 4 ? 4 : sBalance.length()));
                 mNotifTools.sendQuietNotification(getApplicationContext(),
-                        String.format(getString(R.string.notif_balance_title), balance), getString(R.string.toast_seedetail), true);
+                        String.format(getString(R.string.notif_balance_title), sBalance), getString(R.string.toast_seedetail), true);
             }
         }
     }
