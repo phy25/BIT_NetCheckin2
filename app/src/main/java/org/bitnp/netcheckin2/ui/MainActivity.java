@@ -321,7 +321,7 @@ public class MainActivity extends ActionBarActivity{
         Log.d(TAG, "Set progress is called to set balance");
         if(LoginService.getStatus() == NetworkState.OFFLINE){
             waveProgress.setProgress(50);
-            waveProgress.setProgressTxt("");
+            waveProgress.setProgressTxt(" ");
             waveProgress.setCrestCount((float)0.5);
             waveProgress.setWaveSpeed((float)0.02);
             status.setText(getString(R.string.status_unlogged));

@@ -117,6 +117,8 @@ public class NotifTools {
                     .setLargeIcon(getlogoBM(context))
                     .setSmallIcon(R.mipmap.notification_icon);
 
+            if(update) mBuilder.setAutoCancel(false);
+
             mNotificationManager.notify(0, mBuilder.build());
         } else {
             Toast.makeText(context, content, Toast.LENGTH_SHORT).show();
